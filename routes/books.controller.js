@@ -1,80 +1,70 @@
-const bookModel = require('./../models/books.model')
+const bookModel = require("./../models/books.model");
 
-const getBookList = async (req,res) => {
+const getBookList = async (req, res) => {
+  try {
+    const result = await bookModel.getAllBooks();
 
-    try {
-        
-        const result = await bookModel.getAllBooks()
-
-        if(!result){
-            throw Error('No books found')
-        }
-
-        res.status(200).json(result)
-    } catch (error) {
-        console.log(error)
+    if (!result) {
+      res.status(404);
+      throw Error("No books found");
     }
-}
 
-const getBookByTitleQuery = async (req,res) => {
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
 
-    try {
-        
-        const title = req.params.title
-        
-        const result = await bookModel.getBookByTitle(title)
+const getBookByTitleQuery = async (req, res, next) => {
+  try {
+    const title = req.params.title;
 
-        if(!result){
-            throw Error('No books found')
-        }
+    const result = await bookModel.getBookByTitle(title);
 
-        res.status(200).json(result)
-    }catch (error) {
-        res.status(404).json(error)
-    }
-}
-
-const addBook = async (req,res) => {
     
-    try {       
-        const book = req.body
-
-        const result = await bookModel.addBook(book)
-
-        res.status(200).json(result)
-    } catch (error) {
-        
+    if (!result) {
+      res.status(404);
+      throw Error("No books found");
     }
-}
 
-const deleteBookByTitle = async (req,res) => {
+    res.status(200).json(result);
+  } catch (error) {
+    next(error)
+  }
+};
 
-    try {
-        const {title} = req.body
-        const result = bookModel.deleteBookByTitle(title)
+const addBook = async (req, res) => {
+  try {
+    const book = req.body;
 
-        res.status(200).json(result)
-    } catch (error) {
-        
-    }
-}
+    const result = await bookModel.addBook(book);
 
-const updateBookByTitle = async (req,res) => {
+    res.status(200).json(result);
+  } catch (error) {}
+};
 
-    try {
-        const {title,quantityAvailable} = req.body
-        const result = bookModel.updateBookByTitle(title, quantityAvailable)
+const deleteBookByTitle = async (req, res) => {
+  try {
+    const { title } = req.body;
+    const result = bookModel.deleteBookByTitle(title);
 
-        res.status(200).json(result)
-    } catch (error) {
-        
-    }
-}
+    res.status(200).json(result);
+  } catch (error) {}
+};
+
+const updateBookByTitle = async (req, res) => {
+  try {
+    const { title, quantityAvailable } = req.body;
+    const result = bookModel.updateBookByTitle(title, quantityAvailable);
+
+    res.status(200).json(result);
+  } catch (error) {}
+};
 
 module.exports = {
-    getBookList,
-    getBookByTitleQuery,
-    addBook,
-    deleteBookByTitle,
-    updateBookByTitle
-}
+  getBookList,
+  getBookByTitleQuery,
+  addBook,
+  deleteBookByTitle,
+  updateBookByTitle,
+};
